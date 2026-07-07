@@ -1,3 +1,5 @@
+©2026 Noam Gabay, Nir Lab, TAU
+
 # EEG Threshold Annotation GUI (Standalone)
 
 This repository contains an interactive Tkinter graphical user interface (GUI) designed for annotating and setting burst-suppression thresholds on continuous EEG recordings.
@@ -127,6 +129,10 @@ Annotations are saved in a sidecar JSON format:
 *   `supp_epochs` / `burst_epochs`: List of start and end times (seconds) of manually annotated training regions.
 *   `supp_epoch` / `burst_epoch`: Unwrapped coordinates of the first annotated region (kept for backward compatibility with single-range processors).
 *   `saved_at`: Timestamp of the save event.
+
+
+
+
 
 
 Made for a Nir Lab MSc. project
