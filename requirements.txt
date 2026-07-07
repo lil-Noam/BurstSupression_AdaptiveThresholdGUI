@@ -1,0 +1,5 @@
+numpy==1.26.4
+pandas
+scipy
+matplotlib
+tdt==0.6.8
