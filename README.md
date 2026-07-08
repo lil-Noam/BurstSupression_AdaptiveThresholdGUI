@@ -6,6 +6,8 @@ This repository contains an interactive Tkinter graphical user interface (GUI) d
 
 It reads continuous EEG signal streams directly from Tucker-Davis Technologies (TDT) hardware data blocks, calculates signal power features, and provides visual, statistical, and keyboard-driven tools to determine optimal power threshold boundaries.
 
+![EEG Threshold Annotation GUI Screenshot](Screenshot.png)
+
 ---
 
 ## Project Structure
