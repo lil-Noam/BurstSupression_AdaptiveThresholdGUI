@@ -7,9 +7,22 @@ This repository contains an interactive Tkinter graphical user interface (GUI) d
 It reads continuous EEG signal streams directly from Tucker-Davis Technologies (TDT) hardware data blocks, calculates signal power features, and provides visual, statistical, and keyboard-driven tools to determine optimal power threshold boundaries.
 
 ![EEG Threshold Annotation GUI Screenshot](Screenshot.png)
-Blue: Annotated burst epocs <br>
-Dark Red: Annotated suppression epocs <br>
-Light Red: Detected suppression epocs <br>
+* **Blue:** Annotated burst epochs
+* **Dark Red:** Annotated suppression epochs
+* **Light Red:** Detected suppression epochs
+
+---
+
+## Why This Tool Is Needed
+
+EEG signal-to-noise ratios (SNR) vary drastically between different animals, subjects, and individual recording sessions due to physiological differences and experimental setups. Using a fixed global threshold leads to highly inaccurate burst-suppression classifications. 
+
+This GUI solves that problem by **computing an adaptive threshold tailored to each specific recording**, ensuring robust and standardized analysis across heterogeneous datasets.
+
+### Semi-Automatic Workflow
+The tool is built to maximize efficiency. It operates on a **semi-automatic paradigm**:
+* **Minimal Input:** You only need to manually annotate a few seconds or a couple of representative epochs (one for burst, one for suppression).
+* **Full-Length Detection:** Based on this tiny subset of manual data, the system automatically determines the optimal threshold and instantly detects and maps out suppressions across the **entire duration** of the recording.
 
 ---
 
