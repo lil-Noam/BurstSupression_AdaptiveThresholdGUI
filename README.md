@@ -1,12 +1,15 @@
 ©2026 Noam Gabay, Nir Lab, TAU
 
-# EEG Threshold Annotation GUI (Standalone)
+# EEG Semi-Automatic Threshold Annotation GUI
 
 This repository contains an interactive Tkinter graphical user interface (GUI) designed for annotating and setting burst-suppression thresholds on continuous EEG recordings.
 
 It reads continuous EEG signal streams directly from Tucker-Davis Technologies (TDT) hardware data blocks, calculates signal power features, and provides visual, statistical, and keyboard-driven tools to determine optimal power threshold boundaries.
 
 ![EEG Threshold Annotation GUI Screenshot](Screenshot.png)
+Blue: Annotated burst epocs <br>
+Dark Red: Annotated suppression epocs <br>
+Light Red: Detected suppression epocs <br>
 
 ---
 
