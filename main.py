@@ -69,6 +69,7 @@ class EEGThresholdApp:
         
         style = ttk.Style()
         style.theme_use("clam")
+        style.configure("Small.TButton", font=("Segoe UI", 9), padding=2)
         
         # Bind keyboard shortcuts for scrolling
         self.root.bind("<Left>", self.scroll_left)
@@ -98,6 +99,13 @@ class EEGThresholdApp:
         if self.folders:
             self.listbox.selection_set(0)
             self.load_recording(self.folders[0])
+            
+        # Set default sash position for the resizable right panel
+        self.root.update()
+        try:
+            self.right_paned.sashpos(0, 200)
+        except Exception:
+            pass
             
     def build_left_panel(self):
         lbl = ttk.Label(self.left_frame, text="Recordings in Batch", font=("Segoe UI", 12, "bold"))
@@ -154,9 +162,13 @@ class EEGThresholdApp:
         self.run_btn.pack(fill=tk.X, side=tk.BOTTOM, pady=10)
         
     def build_right_panel(self):
+        # Right PanedWindow (Vertical)
+        self.right_paned = ttk.PanedWindow(self.right_frame, orient=tk.VERTICAL)
+        self.right_paned.pack(fill=tk.BOTH, expand=True)
+        
         # Control Panel (Top)
-        self.control_frame = ttk.LabelFrame(self.right_frame, text="Annotation Controls", padding=10)
-        self.control_frame.pack(fill=tk.X, pady=(0, 5))
+        self.control_frame = ttk.LabelFrame(self.right_paned, text="Annotation Controls", padding=15)
+        self.right_paned.add(self.control_frame, weight=1)
         
         # Grid layout for controls (5 columns to fit Zoom Controls)
         self.control_frame.columnconfigure(0, weight=2)
@@ -166,28 +178,28 @@ class EEGThresholdApp:
         self.control_frame.columnconfigure(4, weight=1)
         
         # Active recording name
-        self.rec_title = ttk.Label(self.control_frame, text="No Recording Loaded", font=("Segoe UI", 11, "bold"))
-        self.rec_title.grid(row=0, column=0, columnspan=5, sticky=tk.W, pady=(0, 10))
+        self.rec_title = ttk.Label(self.control_frame, text="No Recording Loaded", font=("Segoe UI", 10, "bold"))
+        self.rec_title.grid(row=0, column=0, columnspan=5, sticky=tk.W, pady=(0, 2))
         
         # Epoch Selection Container
-        epoch_select_frame = ttk.LabelFrame(self.control_frame, text="Mark Epochs (Uses Current Zoom/X-limits)", padding=5)
-        epoch_select_frame.grid(row=1, column=0, columnspan=4, sticky=tk.EW, padx=5, pady=5)
+        epoch_select_frame = ttk.LabelFrame(self.control_frame, text="Mark Epochs (Uses Current Zoom/X-limits)", padding=2)
+        epoch_select_frame.grid(row=1, column=0, columnspan=4, sticky=tk.EW, padx=5, pady=2)
         
-        self.add_supp_btn = ttk.Button(epoch_select_frame, text="+ Add Suppression", command=self.add_suppression_epoch)
-        self.add_supp_btn.pack(side=tk.LEFT, padx=5)
+        self.add_supp_btn = ttk.Button(epoch_select_frame, text="+ Add Suppression", command=self.add_suppression_epoch, style="Small.TButton")
+        self.add_supp_btn.pack(side=tk.LEFT, padx=5, pady=1)
         
-        self.supp_label = ttk.Label(epoch_select_frame, text="Suppression: None", font=("Segoe UI", 10))
+        self.supp_label = ttk.Label(epoch_select_frame, text="Suppression: None", font=("Segoe UI", 9))
         self.supp_label.pack(side=tk.LEFT, padx=(0, 20))
         
-        self.add_burst_btn = ttk.Button(epoch_select_frame, text="+ Add Burst", command=self.add_burst_epoch)
-        self.add_burst_btn.pack(side=tk.LEFT, padx=5)
+        self.add_burst_btn = ttk.Button(epoch_select_frame, text="+ Add Burst", command=self.add_burst_epoch, style="Small.TButton")
+        self.add_burst_btn.pack(side=tk.LEFT, padx=5, pady=1)
         
-        self.burst_label = ttk.Label(epoch_select_frame, text="Burst: None", font=("Segoe UI", 10))
+        self.burst_label = ttk.Label(epoch_select_frame, text="Burst: None", font=("Segoe UI", 9))
         self.burst_label.pack(side=tk.LEFT, padx=10)
         
         # Threshold Tuning Row
-        thresh_container = ttk.LabelFrame(self.control_frame, text="Threshold Adjustment (Log10 Power)", padding=5)
-        thresh_container.grid(row=2, column=0, columnspan=2, sticky=tk.EW, padx=5, pady=10)
+        thresh_container = ttk.LabelFrame(self.control_frame, text="Threshold Adjustment (Log10 Power)", padding=2)
+        thresh_container.grid(row=2, column=0, columnspan=2, sticky=tk.EW, padx=5, pady=2)
         
         self.thresh_slider = ttk.Scale(
             thresh_container, 
@@ -206,63 +218,73 @@ class EEGThresholdApp:
         
         # Epoch Management Buttons
         epoch_mgmt_container = ttk.Frame(self.control_frame)
-        epoch_mgmt_container.grid(row=2, column=2, columnspan=2, sticky=tk.NSEW, padx=5, pady=10)
+        epoch_mgmt_container.grid(row=2, column=2, columnspan=2, sticky=tk.NSEW, padx=5, pady=2)
         
-        self.save_btn = ttk.Button(epoch_mgmt_container, text="Save Threshold 💾", command=self.save_threshold_to_json, state='disabled')
+        self.save_btn = ttk.Button(epoch_mgmt_container, text="Save Threshold 💾", command=self.save_threshold_to_json, state='disabled', style="Small.TButton")
         self.save_btn.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 2))
         
-        self.undo_btn = ttk.Button(epoch_mgmt_container, text="Undo Last ↶", command=self.undo_last_epoch)
+        self.undo_btn = ttk.Button(epoch_mgmt_container, text="Undo Last ↶", command=self.undo_last_epoch, style="Small.TButton")
         self.undo_btn.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(2, 2))
         
-        self.delete_epochs_btn = ttk.Button(epoch_mgmt_container, text="Delete All ❌", command=self.delete_epochs)
+        self.delete_epochs_btn = ttk.Button(epoch_mgmt_container, text="Delete All ❌", command=self.delete_epochs, style="Small.TButton")
         self.delete_epochs_btn.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(2, 0))
         
         # General Zoom & Filter Control Panel (X, Y and Filters)
-        zoom_container = ttk.LabelFrame(self.control_frame, text="Signal View / Zoom", padding=5)
-        zoom_container.grid(row=1, column=4, rowspan=2, sticky=tk.NSEW, padx=5, pady=5)
+        zoom_container = ttk.LabelFrame(self.control_frame, text="Signal View / Zoom", padding=2)
+        zoom_container.grid(row=1, column=4, rowspan=2, sticky=tk.NSEW, padx=5, pady=2)
         
-        # Filter Mode Selector
-        ttk.Label(zoom_container, text="Filter Mode:", font=("Segoe UI", 9, "bold")).pack(anchor=tk.W, pady=(2, 0))
+        # Row 1: Filter Mode (Compact Label + Combobox)
+        filter_frame = ttk.Frame(zoom_container)
+        filter_frame.pack(side=tk.TOP, fill=tk.X, expand=True, pady=1)
+        ttk.Label(filter_frame, text="Filter:", font=("Segoe UI", 9, "bold")).pack(side=tk.LEFT, padx=2)
         self.filter_mode_var = tk.StringVar(value="0.5-100 Hz (Filtered)")
         self.filter_mode_menu = ttk.Combobox(
-            zoom_container,
+            filter_frame,
             textvariable=self.filter_mode_var,
             values=["0.5-100 Hz (Filtered)", "Raw EEG"],
-            width=15,
+            width=18,
             state="readonly"
         )
-        self.filter_mode_menu.pack(fill=tk.X, pady=2)
+        self.filter_mode_menu.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=2)
         self.filter_mode_menu.bind("<<ComboboxSelected>>", self.on_filter_mode_change)
         
+        # Row 2: Zoom X and Zoom Y side-by-side
+        zoom_btn_frame = ttk.Frame(zoom_container)
+        zoom_btn_frame.pack(side=tk.TOP, fill=tk.X, expand=True, pady=1)
+        
         # X Zoom Buttons
-        ttk.Label(zoom_container, text="Time (X):", font=("Segoe UI", 9, "bold")).pack(anchor=tk.W, pady=(4, 0))
-        x_btn_frame = ttk.Frame(zoom_container)
-        x_btn_frame.pack(fill=tk.X, pady=2)
-        self.x_zoom_in_btn = ttk.Button(x_btn_frame, text="In", command=self.zoom_x_in, width=6)
+        x_frame = ttk.Frame(zoom_btn_frame)
+        x_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=2)
+        ttk.Label(x_frame, text="X:", font=("Segoe UI", 9, "bold")).pack(side=tk.LEFT, padx=1)
+        self.x_zoom_in_btn = ttk.Button(x_frame, text="In", command=self.zoom_x_in, width=3, style="Small.TButton")
         self.x_zoom_in_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.x_zoom_out_btn = ttk.Button(x_btn_frame, text="Out", command=self.zoom_x_out, width=6)
-        self.x_zoom_out_btn.pack(side=tk.RIGHT, fill=tk.X, expand=True, padx=1)
+        self.x_zoom_out_btn = ttk.Button(x_frame, text="Out", command=self.zoom_x_out, width=3, style="Small.TButton")
+        self.x_zoom_out_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
         
         # Y Zoom Buttons
-        ttk.Label(zoom_container, text="Amplitude (Y):", font=("Segoe UI", 9, "bold")).pack(anchor=tk.W, pady=(4, 0))
-        y_btn_frame = ttk.Frame(zoom_container)
-        y_btn_frame.pack(fill=tk.X, pady=2)
-        self.y_zoom_in_btn = ttk.Button(y_btn_frame, text="In", command=self.zoom_y_in, width=6)
+        y_frame = ttk.Frame(zoom_btn_frame)
+        y_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=2)
+        ttk.Label(y_frame, text="Y:", font=("Segoe UI", 9, "bold")).pack(side=tk.LEFT, padx=1)
+        self.y_zoom_in_btn = ttk.Button(y_frame, text="In", command=self.zoom_y_in, width=3, style="Small.TButton")
         self.y_zoom_in_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
-        self.y_zoom_out_btn = ttk.Button(y_btn_frame, text="Out", command=self.zoom_y_out, width=6)
-        self.y_zoom_out_btn.pack(side=tk.RIGHT, fill=tk.X, expand=True, padx=1)
+        self.y_zoom_out_btn = ttk.Button(y_frame, text="Out", command=self.zoom_y_out, width=3, style="Small.TButton")
+        self.y_zoom_out_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=1)
+        
+        # Row 3: Action Buttons side-by-side
+        action_btn_frame = ttk.Frame(zoom_container)
+        action_btn_frame.pack(side=tk.TOP, fill=tk.X, expand=True, pady=1)
         
         # Auto Fit Y button
-        self.y_auto_btn = ttk.Button(zoom_container, text="Auto Fit Y", command=self.auto_y_scale)
-        self.y_auto_btn.pack(fill=tk.X, pady=(2, 2))
+        self.y_auto_btn = ttk.Button(action_btn_frame, text="Auto Fit Y", command=self.auto_y_scale, style="Small.TButton")
+        self.y_auto_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=2)
         
         # Save Plot Image button
-        self.save_img_btn = ttk.Button(zoom_container, text="Save Plot Image 📷", command=self.save_plot_image)
-        self.save_img_btn.pack(fill=tk.X, pady=(2, 2))
+        self.save_img_btn = ttk.Button(action_btn_frame, text="Save Plot Image 📷", command=self.save_plot_image, style="Small.TButton")
+        self.save_img_btn.pack(side=tk.RIGHT, fill=tk.X, expand=True, padx=2)
         
         # Plot Frame (Middle/Bottom)
-        self.plot_frame = ttk.Frame(self.right_frame)
-        self.plot_frame.pack(fill=tk.BOTH, expand=True)
+        self.plot_frame = ttk.Frame(self.right_paned)
+        self.right_paned.add(self.plot_frame, weight=4)
         
         # Create Matplotlib Figure
         self.fig = Figure(figsize=(10, 8), dpi=100)
@@ -492,14 +514,14 @@ class EEGThresholdApp:
             
             # Plot 1: Decimated EEG Filtered Signal
             self.ax1.plot(self.t_disp, self.sig_disp, color='#2c3e50', linewidth=0.5)
-            self.ax1.set_ylabel("EEG Filtered (V)")
+            self.ax1.set_ylabel("EEG Filtered\n(V)", rotation=90)
             self.ax1.set_title(f"EEG: {rec_name}", fontsize=11, fontweight='bold')
             self.ax1.grid(True, linestyle=':', alpha=0.5)
             
             # Plot 2: Log Power Envelope
             self.ax2.plot(self.t_disp, self.env_disp, color='#7f8c8d', linewidth=0.5)
             self.ax2.set_xlabel("Time (s)")
-            self.ax2.set_ylabel("Log10 Power Envelope")
+            self.ax2.set_ylabel("Log10 Power\nEnvelope", rotation=90)
             self.ax2.grid(True, linestyle=':', alpha=0.5)
             
             # Plot 3: Initial empty histogram
@@ -578,10 +600,10 @@ class EEGThresholdApp:
             mode = self.filter_mode_var.get()
             if "0.5-100" in mode:
                 sig = self.sig_filt
-                ylabel = "EEG Filtered 0.5-100Hz (V)"
+                ylabel = "EEG Filtered 0.5-100Hz\n(V)"
             else:
                 sig = self.sig_raw
-                ylabel = "EEG Raw (V)"
+                ylabel = "EEG Raw\n(V)"
                 
             decimate_factor = max(1, len(sig) // 100000)
             self.sig_disp = sig[::decimate_factor]
@@ -591,7 +613,7 @@ class EEGThresholdApp:
             # Re-connect xlim changed callback because clear() disconnects it!
             self.ax1.callbacks.connect('xlim_changed', self.on_xlim_changed)
             self.ax1.plot(self.t_disp, self.sig_disp, color='#2c3e50', linewidth=0.5)
-            self.ax1.set_ylabel(ylabel)
+            self.ax1.set_ylabel(ylabel, rotation=90)
             self.ax1.set_title(f"EEG: {self.current_folder.name}", fontsize=11, fontweight='bold')
             self.ax1.grid(True, linestyle=':', alpha=0.5)
             self.ax1.set_xlim(xlim)
@@ -1000,7 +1022,7 @@ class EEGThresholdApp:
         self.ax3.hist(vals_supp, bins=30, color='#e74c3c', alpha=0.6, label='Suppression')
         self.ax3.hist(vals_burst, bins=30, color='#3498db', alpha=0.6, label='Burst')
         self.ax3.set_xlabel("Log10(Power)")
-        self.ax3.set_ylabel("Count")
+        self.ax3.set_ylabel("Count", rotation=90)
         self.ax3.set_title("Power Distribution in Selected Epochs", fontsize=10, fontweight='bold')
         self.ax3.legend()
         self.ax3.grid(True, linestyle=':', alpha=0.5)
@@ -1191,7 +1213,7 @@ class EEGThresholdApp:
             
             # Plot 1: EEG Signal
             ax1_exp.plot(self.t_disp, self.sig_disp, color='#2c3e50', linewidth=0.5)
-            ax1_exp.set_ylabel(self.ax1.get_ylabel())
+            ax1_exp.set_ylabel(self.ax1.get_ylabel(), rotation=90)
             ax1_exp.set_title(self.ax1.get_title(), fontsize=12, fontweight='bold')
             ax1_exp.grid(True, linestyle=':', alpha=0.5)
             ax1_exp.set_xlim(self.ax1.get_xlim())
@@ -1229,7 +1251,7 @@ class EEGThresholdApp:
             # Plot 2: Log Power Envelope
             ax2_exp.plot(self.t_disp, self.env_disp, color='#7f8c8d', linewidth=0.5)
             ax2_exp.set_xlabel("Time (s)")
-            ax2_exp.set_ylabel("Log10 Power Envelope")
+            ax2_exp.set_ylabel("Log10 Power\nEnvelope", rotation=90)
             ax2_exp.grid(True, linestyle=':', alpha=0.5)
             ax2_exp.set_xlim(self.ax2.get_xlim())
             ax2_exp.set_ylim(self.ax2.get_ylim())
@@ -1275,7 +1297,7 @@ class EEGThresholdApp:
                     ax3_exp.hist(vals_supp, bins=30, color='#e74c3c', alpha=0.6, label='Suppression')
                     ax3_exp.hist(vals_burst, bins=30, color='#3498db', alpha=0.6, label='Burst')
                     ax3_exp.set_xlabel("Log10(Power)")
-                    ax3_exp.set_ylabel("Count")
+                    ax3_exp.set_ylabel("Count", rotation=90)
                     ax3_exp.set_title("Power Distribution in Selected Epochs", fontsize=11, fontweight='bold')
                     ax3_exp.legend()
                     ax3_exp.grid(True, linestyle=':', alpha=0.5)
