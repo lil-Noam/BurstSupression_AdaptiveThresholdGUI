@@ -13,7 +13,7 @@ It reads continuous EEG signal streams directly from Tucker-Davis Technologies (
 
 ---
 
-## Why This Tool Is Needed
+### Why We Made This Tool
 
 EEG signal-to-noise ratios (SNR) vary drastically between different animals, subjects, and individual recording sessions due to physiological differences and experimental setups. Using a fixed global threshold leads to highly inaccurate burst-suppression classifications. 
 
@@ -55,8 +55,8 @@ To maintain separation of concerns, the standalone project is split into:
 
 ### 3. Annotation & Automated Threshold Estimation
 *   **Representative Epoch Labeling**:
-    *   Find a region of flat, low-amplitude activity and click **+ Add Suppression** to mark the current window limits.
-    *   Find a region of high-intensity burst activity and click **+ Add Burst** to mark the current window limits.
+    *   Find a region of flat, low-amplitude activity, zoom on it and click **+ Add Suppression** to mark the current window limits.
+    *   Find a region of high-intensity burst activity, zoom on it and click **+ Add Burst** to mark the current window limits.
 *   **Live Power Distributions**: Plots overlapping histograms of the log-power values within marked suppression (red) and burst (blue) zones in Plot 3.
 *   **Heuristics-Based Auto-Shading**: Displays real-time red shading spans where the log-power envelope falls below the selected threshold, cleaned up by neurophysiological heuristics (bridging suppression gaps $< 0.5\text{ s}$ and filtering out noise bursts $< 0.1\text{ s}$).
 *   **Automated Threshold Proposing**: Instantly calculates a proposed separator threshold as soon as both categories are represented:
